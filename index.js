@@ -20,6 +20,28 @@ client.connect(err => {
     const orderCollection = client.db("creativeAgency").collection("order");
     const adminCollection = client.db("creativeAgency").collection("admin");
     //admin
+    //identify an admin 
+    app.get('/isAdmin', (req, res) => {
+        const email = req.query.email
+        adminCollection.find({ admin: email })
+            .toArray((err, document) => {
+                res.send(document)
+            })
+    })
+    app.get('/isUser', (req, res) => {
+        const email = req.query.email
+        adminCollection.find({ admin: email })
+            .toArray((err, document) => {
+                res.send(document)
+            })
+    })
+    //get all order data 
+    app.get('/showAllOrder', (req, res) => {
+        orderCollection.find()
+            .toArray((err, document) => {
+                res.send(document)
+            })
+    })
     //Make admin 
     app.post("/makeAdmin", (req, res) => {
         const admin = req.body.email;
@@ -62,6 +84,7 @@ client.connect(err => {
         const description = req.body.description;
         const service = req.body.service;
         const price = req.body.price;
+        const serviceName = req.body.serviceName;
         const date = req.body.date;
         const file = req.files.image;
         const Img = file.data;
@@ -74,7 +97,7 @@ client.connect(err => {
             img: Buffer.from(encImg, 'base64')
         }
 
-        orderCollection.insertOne({ userName, userEmail, description, image, service, price, date })
+        orderCollection.insertOne({ userName, userEmail, description, serviceName, image, service, price, date })
             .then(result => {
                 res.send(result.insertedCount > 0)
             })
